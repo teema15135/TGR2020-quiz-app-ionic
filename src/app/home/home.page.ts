@@ -16,7 +16,7 @@ export class HomePage implements OnInit {
   lat: string;
   lng: string;
 
-  arr_data = [];
+  arrData = [];
 
   last5Data = [];
 
@@ -34,44 +34,52 @@ export class HomePage implements OnInit {
     //   console.log(this.last5Data);
     // }, 3000);
 
-    this.apiService
-      .getPMData()
-      .then(res => res.json())
-      .then(data => {
-        this.arr_data = [];
-        let lastData = null;
-        const UPLINK = "DevEUI_uplink";
-        for (const key in data) {
-          if (!data.hasOwnProperty(key)) {
-            continue;
-          }
-          if (data[key][UPLINK]) {
-            lastData = data[key][UPLINK];
-            this.lastTime = lastData.Time;
-            this.lat = lastData.LrrLAT;
-            this.lng = lastData.LrrLON;
-            try {
-              this.arr_data.push({
-                time: lastData.Time,
-                lat: lastData.LrrLAT,
-                lng: lastData.LrrLON,
-                pm: Number.parseInt(lastData.payload_hex.slice(2, 4), 16)
-              });
-            } catch {}
-          }
-        }
-        try {
-          this.currentPM = Number.parseInt(
-            lastData.payload_hex.slice(2, 4),
-            16
-          );
-        } catch {
-          // do nothing
-        }
+    this.loadPMData(null);
+  }
 
-        this.last5Data = this.arr_data.slice(Math.max(this.arr_data.length - 6, 1)).reverse();
-        this.scanDisable = false;
-      });
+  loadPMData(event) {
+    this.apiService
+    .getPMData()
+    .then(res => res.json())
+    .then(data => {
+      this.arrData = [];
+      let lastData = null;
+      const UPLINK = 'DevEUI_uplink';
+      for (const key in data) {
+        if (!data.hasOwnProperty(key)) {
+          continue;
+        }
+        if (data[key][UPLINK]) {
+          lastData = data[key][UPLINK];
+          this.lastTime = lastData.Time;
+          this.lat = lastData.LrrLAT;
+          this.lng = lastData.LrrLON;
+          try {
+            this.arrData.push({
+              time: lastData.Time,
+              lat: lastData.LrrLAT,
+              lng: lastData.LrrLON,
+              pm: Number.parseInt(lastData.payload_hex.slice(2, 4), 16)
+            });
+          } catch {}
+        }
+      }
+      try {
+        this.currentPM = Number.parseInt(
+          lastData.payload_hex.slice(2, 4),
+          16
+        );
+      } catch {
+        // do nothing
+      }
+
+      this.last5Data = this.arrData.slice(Math.max(this.arrData.length - 6, 1)).reverse();
+      this.scanDisable = false;
+
+      if (event) {
+        event.target.complete();
+      }
+    });
   }
 
   async scanForPM() {

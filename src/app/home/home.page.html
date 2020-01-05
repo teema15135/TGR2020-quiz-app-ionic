@@ -1,9 +1,22 @@
 <ion-content color="primary">
+  <ion-refresher slot="fixed" (ionRefresh)="loadPMData($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-dropdown"
+      pullingText="Pull to refresh"
+      refreshingSpinner="circles"
+      refreshingText="Refreshing..."
+    >
+    </ion-refresher-content>
+  </ion-refresher>
   <ion-grid class="ion-padding">
     <ion-row class="row">
       <ion-col class="row ion-text-center">
-        <h1 *ngIf="currentPM != 191" class="x-large-text addition-margin">{{ currentPM }}</h1>
-        <h1 *ngIf="currentPM == 191" class="x-large-text addition-margin">Err</h1>
+        <h1 *ngIf="currentPM != 191" class="x-large-text addition-margin">
+          {{ currentPM }}
+        </h1>
+        <h1 *ngIf="currentPM == 191" class="x-large-text addition-margin">
+          Err
+        </h1>
       </ion-col>
     </ion-row>
     <ion-row class="row">
@@ -23,7 +36,8 @@
       <ion-col class="row ion-text-center">
         <ion-card *ngFor="let item of last5Data" color="light">
           <ion-card-content>
-            <h2>{{ item.pm }}</h2>
+            <h2 *ngIf="item.pm == 191">191 Error</h2>
+            <h2 *ngIf="item.pm != 191">{{ item.pm }}</h2>
             <p>{{ item.time }}</p>
           </ion-card-content>
         </ion-card>
