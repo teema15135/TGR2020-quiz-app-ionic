@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -21,9 +20,9 @@ export class ApiService {
         'Content-Type' : 'application/json',
       },
       body: JSON.stringify({
-        pmValue: pm,
-        latitude: lat,
-        longtitude: lng,
+        pmValue: Number(pm),
+        latitude: Number(lat),
+        longtitude: Number(lng),
         timestamp: time,
         team: '21',
       }),
