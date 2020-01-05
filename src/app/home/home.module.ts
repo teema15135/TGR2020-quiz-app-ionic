@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 
 import { HomePage } from './home.page';
 
+import { ScanningPageModule } from './scanning/scanning.module';
 
 @NgModule({
   imports: [
@@ -18,7 +19,9 @@ import { HomePage } from './home.page';
         component: HomePage
       }
     ]),
+
+    ScanningPageModule,
   ],
-  declarations: [HomePage]
+  declarations: [HomePage],
 })
 export class HomePageModule {}

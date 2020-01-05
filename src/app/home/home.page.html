@@ -1,16 +1,20 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>
-      Ionic Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
+<ion-content color="primary">
   <ion-grid class="ion-padding">
-    <ion-row style="width: 100%">
-      <ion-col class="ion-text-center" style="width: 100%">
-        <h1 class="x-large-text">23</h1>
+    <ion-row class="row">
+      <ion-col class="row ion-text-center">
+        <h1 class="x-large-text addition-margin">{{ currentPM }}</h1>
+      </ion-col>
+    </ion-row>
+    <ion-row class="row">
+      <ion-col class="row ion-text-center">
+        <ion-button
+          color="secondary"
+          expand="full"
+          shape="round"
+          (click)="scanForPM()"
+        >
+          Scan for PM 2.5
+        </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>
