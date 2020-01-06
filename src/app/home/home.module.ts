@@ -9,6 +9,7 @@ import { HomePage } from './home.page';
 import { ScanningPageModule } from './scanning/scanning.module';
 
 import { TimeAgoPipe } from 'time-ago-pipe';
+import { CoefficientPageModule } from './coefficient/coefficient.module';
 
 @NgModule({
   imports: [
@@ -23,6 +24,7 @@ import { TimeAgoPipe } from 'time-ago-pipe';
     ]),
 
     ScanningPageModule,
+    CoefficientPageModule,
   ],
   declarations: [HomePage, TimeAgoPipe],
 })

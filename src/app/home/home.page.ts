@@ -3,6 +3,8 @@ import { ApiService } from '../service/api.service';
 
 import { ModalController, AlertController } from '@ionic/angular';
 import { ScanningModalPageComponent } from './scanning/scanning.page';
+import { CoefficientPage } from './coefficient/coefficient.page';
+import { OverlayEventDetail } from '@ionic/core';
 
 @Component({
   selector: 'app-home',
@@ -12,6 +14,8 @@ import { ScanningModalPageComponent } from './scanning/scanning.page';
 export class HomePage implements OnInit {
   isLoading = true;
   currentPM = 0;
+
+  warningMessage = 'Loading...';
 
   lastTime: string;
   lat: string;
@@ -24,6 +28,7 @@ export class HomePage implements OnInit {
   scanDisable = true;
 
   color = 'primary';
+  buttonColor = 'secondary';
 
   constructor(
     private apiService: ApiService,
@@ -72,7 +77,8 @@ export class HomePage implements OnInit {
             16
           );
           this.isLoading = false;
-          this.updateBackground();
+          // this.currentPM = 100;
+          this.updateBackgroundAndWarningMessage();
         } catch {
           // do nothing
         }
@@ -88,19 +94,29 @@ export class HomePage implements OnInit {
       });
   }
 
-  updateBackground() {
+  updateBackgroundAndWarningMessage() {
+    if (this.currentPM === 191) {
+      this.color = 'primary';
+      this.warningMessage = 'Sensor error';
+    }
     if (this.currentPM <= 12) {
       this.color = 'good';
+      this.warningMessage = 'Good';
     } else if (this.currentPM <= 35) {
       this.color = 'moderate';
+      this.warningMessage = 'Moderate';
     } else if (this.currentPM <= 55) {
       this.color = 'nearlyunhealthy';
+      this.warningMessage = 'Nearly unhealthy';
     } else if (this.currentPM <= 150) {
       this.color = 'unhealthy';
+      this.warningMessage = 'Unhealthy';
     } else if (this.currentPM <= 250) {
       this.color = 'veryunhealthy';
+      this.warningMessage = 'Very unhealthy';
     } else {
       this.color = 'hazardous';
+      this.warningMessage = 'Hazardous';
     }
   }
 
@@ -122,6 +138,24 @@ export class HomePage implements OnInit {
     } else {
       this.presentAlert('Fail', 'Fail to send geolocation');
     }
+  }
+
+  async updateCoefficient() {
+    const modal = await this.modalController.create({
+      component: CoefficientPage,
+    });
+
+    modal.onDidDismiss().then((detail: OverlayEventDetail) => {
+      if (detail.data === 'complete') {
+        this.presentAlert('Successful', 'Downlink payload queued!');
+      } else if (detail.data === 'cancel') {
+        // do nothing
+      } else {
+        this.presentAlert('Fail', 'Fail to send downlink');
+      }
+    });
+
+    await modal.present();
   }
 
   async presentAlert(header: string, message: string) {

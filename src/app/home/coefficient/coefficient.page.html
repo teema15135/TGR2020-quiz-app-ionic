@@ -1,0 +1,24 @@
+<ion-content color="primary">
+  <ion-grid class="row" style="height: 100%;">
+    <ion-row class="ion-padding row">
+      <ion-col
+        class="ion-padding ion-justify-content-center ion-text-center"
+        style="height: 100%;"
+      >
+
+        <h3>Add Customer adjustment coefficient</h3>
+
+        <form [formGroup]="coefForm" (ngSubmit)="send()">
+          <ion-item class="ion-margin" color="primary">
+            <ion-label position="floating">Coefficient (30-200)</ion-label>
+            <ion-input required formControlName="value" type="number" inputmode="numeric" min="30" max="200"></ion-input>
+          </ion-item>
+          <ion-button [disabled]="!coefForm.valid" color="danger" fill="solid" size="large" type="submit">Send downlink</ion-button>
+        </form>
+
+        <ion-button class="ion-margin" (click)="cancel()" color="light" fill="outline" size="small">Cancel</ion-button>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

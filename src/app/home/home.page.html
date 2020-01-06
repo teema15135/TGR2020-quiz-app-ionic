@@ -18,10 +18,10 @@
     type="indeterminate"
   ></ion-progress-bar>
   <ion-grid class="ion-padding">
-    <ion-row class="row">
+    <ion-row class="row ion-margin-top">
       <ion-col>
-        <ion-icon style="color: white; font-size: 28px;" name="menu"></ion-icon>
-        <ion-icon style="color: white; float: right; font-size: 28px;" name="refresh"></ion-icon>
+        <ion-icon (click)="updateCoefficient()" style="color: white; font-size: 28px;" name="menu"></ion-icon>
+        <ion-icon (click)="scanForPM()" style="color: white; float: right; font-size: 28px;" name="md-locate"></ion-icon>
       </ion-col>
     </ion-row>
     <ion-row class="row">
@@ -46,11 +46,11 @@
       <ion-col class="row ion-text-center ion-padding">
         <ion-button
           [disabled]="scanDisable"
-          color="secondary"
+          color="light"
           shape="round"
-          (click)="scanForPM()"
+          fill="outline"
         >
-          Scan for PM 2.5
+          {{ warningMessage }}
         </ion-button>
       </ion-col>
     </ion-row>
