@@ -8,6 +8,8 @@ import { HomePage } from './home.page';
 
 import { ScanningPageModule } from './scanning/scanning.module';
 
+import { TimeAgoPipe } from 'time-ago-pipe';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -22,6 +24,6 @@ import { ScanningPageModule } from './scanning/scanning.module';
 
     ScanningPageModule,
   ],
-  declarations: [HomePage],
+  declarations: [HomePage, TimeAgoPipe],
 })
 export class HomePageModule {}

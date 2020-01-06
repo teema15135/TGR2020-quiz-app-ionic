@@ -1,15 +1,16 @@
-import { Component, OnInit } from "@angular/core";
-import { ApiService } from "../service/api.service";
+import { Component, OnInit } from '@angular/core';
+import { ApiService } from '../service/api.service';
 
-import { ModalController, AlertController } from "@ionic/angular";
-import { ScanningModalPageComponent } from "./scanning/scanning.page";
+import { ModalController, AlertController } from '@ionic/angular';
+import { ScanningModalPageComponent } from './scanning/scanning.page';
 
 @Component({
-  selector: "app-home",
-  templateUrl: "home.page.html",
-  styleUrls: ["home.page.scss"]
+  selector: 'app-home',
+  templateUrl: 'home.page.html',
+  styleUrls: ['home.page.scss']
 })
 export class HomePage implements OnInit {
+  isLoading = true;
   currentPM = 0;
 
   lastTime: string;
@@ -22,14 +23,15 @@ export class HomePage implements OnInit {
 
   scanDisable = true;
 
+  color = 'primary';
+
   constructor(
     private apiService: ApiService,
     private modalController: ModalController,
-    private alertController: AlertController,
-  ) {}
+    private alertController: AlertController
+  ) { }
 
   ngOnInit(): void {
-
     // setInterval(() => {
     //   console.log(this.last5Data);
     // }, 3000);
@@ -39,47 +41,67 @@ export class HomePage implements OnInit {
 
   loadPMData(event) {
     this.apiService
-    .getPMData()
-    .then(res => res.json())
-    .then(data => {
-      this.arrData = [];
-      let lastData = null;
-      const UPLINK = 'DevEUI_uplink';
-      for (const key in data) {
-        if (!data.hasOwnProperty(key)) {
-          continue;
+      .getPMData()
+      .then(res => res.json())
+      .then(data => {
+        this.arrData = [];
+        let lastData = null;
+        const UPLINK = 'DevEUI_uplink';
+        for (const key in data) {
+          if (!data.hasOwnProperty(key)) {
+            continue;
+          }
+          if (data[key][UPLINK]) {
+            lastData = data[key][UPLINK];
+            this.lastTime = lastData.Time;
+            this.lat = lastData.LrrLAT;
+            this.lng = lastData.LrrLON;
+            try {
+              this.arrData.push({
+                time: lastData.Time,
+                lat: lastData.LrrLAT,
+                lng: lastData.LrrLON,
+                pm: Number.parseInt(lastData.payload_hex.slice(2, 4), 16)
+              });
+            } catch { }
+          }
         }
-        if (data[key][UPLINK]) {
-          lastData = data[key][UPLINK];
-          this.lastTime = lastData.Time;
-          this.lat = lastData.LrrLAT;
-          this.lng = lastData.LrrLON;
-          try {
-            this.arrData.push({
-              time: lastData.Time,
-              lat: lastData.LrrLAT,
-              lng: lastData.LrrLON,
-              pm: Number.parseInt(lastData.payload_hex.slice(2, 4), 16)
-            });
-          } catch {}
+        try {
+          this.currentPM = Number.parseInt(
+            lastData.payload_hex.slice(2, 4),
+            16
+          );
+          this.isLoading = false;
+          this.updateBackground();
+        } catch {
+          // do nothing
         }
-      }
-      try {
-        this.currentPM = Number.parseInt(
-          lastData.payload_hex.slice(2, 4),
-          16
-        );
-      } catch {
-        // do nothing
-      }
 
-      this.last5Data = this.arrData.slice(Math.max(this.arrData.length - 6, 1)).reverse();
-      this.scanDisable = false;
+        this.last5Data = this.arrData
+          .slice(Math.max(this.arrData.length - 6, 1))
+          .reverse();
+        this.scanDisable = false;
 
-      if (event) {
-        event.target.complete();
-      }
-    });
+        if (event) {
+          event.target.complete();
+        }
+      });
+  }
+
+  updateBackground() {
+    if (this.currentPM <= 12) {
+      this.color = 'good';
+    } else if (this.currentPM <= 35) {
+      this.color = 'moderate';
+    } else if (this.currentPM <= 55) {
+      this.color = 'nearlyunhealthy';
+    } else if (this.currentPM <= 150) {
+      this.color = 'unhealthy';
+    } else if (this.currentPM <= 250) {
+      this.color = 'veryunhealthy';
+    } else {
+      this.color = 'hazardous';
+    }
   }
 
   async scanForPM() {

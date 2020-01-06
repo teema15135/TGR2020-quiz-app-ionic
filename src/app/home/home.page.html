@@ -1,5 +1,9 @@
-<ion-content color="primary">
-  <ion-refresher slot="fixed" (ionRefresh)="loadPMData($event)">
+<ion-content color="{{ color }}">
+  <ion-refresher
+    class="ion-margin-top"
+    slot="fixed"
+    (ionRefresh)="loadPMData($event)"
+  >
     <ion-refresher-content
       pullingIcon="arrow-dropdown"
       pullingText="Pull to refresh"
@@ -8,10 +12,29 @@
     >
     </ion-refresher-content>
   </ion-refresher>
+  <ion-progress-bar
+    *ngIf="isLoading"
+    color="light"
+    type="indeterminate"
+  ></ion-progress-bar>
   <ion-grid class="ion-padding">
     <ion-row class="row">
+      <ion-col>
+        <ion-icon style="color: white; font-size: 28px;" name="menu"></ion-icon>
+        <ion-icon style="color: white; float: right; font-size: 28px;" name="refresh"></ion-icon>
+      </ion-col>
+    </ion-row>
+    <ion-row class="row">
       <ion-col class="row ion-text-center">
-        <h1 *ngIf="currentPM != 191" class="x-large-text addition-margin">
+        <ion-icon
+          class="extra-margin-top"
+          style="font-size: 24pt; color: white;"
+          name="md-nuclear"
+        ></ion-icon>
+        <p style="color: white; font-weight: 400;" class="ion-no-margin">
+          {{ lastTime | timeAgo }}
+        </p>
+        <h1 *ngIf="currentPM != 191" class="x-large-text ion-no-margin">
           {{ currentPM }}
         </h1>
         <h1 *ngIf="currentPM == 191" class="x-large-text addition-margin">
@@ -24,7 +47,6 @@
         <ion-button
           [disabled]="scanDisable"
           color="secondary"
-          expand="full"
           shape="round"
           (click)="scanForPM()"
         >
@@ -32,13 +54,66 @@
         </ion-button>
       </ion-col>
     </ion-row>
-    <ion-row class="row">
+    <ion-row class="row" style="display: none;">
       <ion-col class="row ion-text-center">
         <ion-card *ngFor="let item of last5Data" color="light">
           <ion-card-content>
             <h2 *ngIf="item.pm == 191">191 Error</h2>
             <h2 *ngIf="item.pm != 191">{{ item.pm }}</h2>
             <p>{{ item.time }}</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row class="row">
+      <ion-col class="row ion-text-center">
+        <ion-card color="light">
+          <ion-card-content style="padding-bottom: 0px;">
+            <ion-list class="ion-no-padding">
+              <ion-item-divider class="ion-text-center" color="light">
+                <ion-label
+                  class="ion-text-center"
+                  style="width: 100%; font-size: 44pt;"
+                >
+                  <h2>Previous data</h2>
+                </ion-label>
+              </ion-item-divider>
+
+              <ion-item *ngIf="isLoading" color="ligth" class="ion-no-padding" lines="none">
+                <ion-spinner
+                  class="ion-no-margin ion-no-padding"
+                  style="width: 100%; background-color: #f4f5f8;"
+                  color="primary"
+                  name="dots"
+                ></ion-spinner>
+              </ion-item>
+
+              <ion-item
+                *ngFor="let item of last5Data; let last = last"
+                color="light"
+                class="ion-no-padding"
+                lines="{{ last ? 'none' : 'full' }}"
+              >
+                <div style="width: 20%;">
+                  <ion-icon name="cloud-outline"></ion-icon>
+                </div>
+                <ion-label style="width: 70%;">
+                  <h2 *ngIf="item.pm == 191">Sensor error</h2>
+                  <h2 *ngIf="item.pm != 191">{{ item.pm }}</h2>
+                  <p style="color: gray;">{{ item.time | date:'medium' }}</p>
+                  <p *ngIf="item == last">Last</p>
+                </ion-label>
+              </ion-item>
+
+              <ion-item *ngIf="!isLoading" lines="none" class="ion-no-padding" color="light">
+                <ion-icon
+                  class="row ion-text-center ion-align-item-center"
+                  style="color: gray; width: 100%;"
+                  name="md-more"
+                ></ion-icon>
+              </ion-item>
+
+            </ion-list>
           </ion-card-content>
         </ion-card>
       </ion-col>
